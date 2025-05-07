@@ -33,7 +33,7 @@
             const userInput = document.getElementById('user-input').value;
             if (!userInput.trim()) return;
 
-            chatBox.innerHTML += `<div class="message user-message"><span>You:</span> ${userInput}</div>`;
+            chatBox.innerHTML += `<div class="message customer-message"><span></span> ${userInput}</div>`;
 
             const response = await fetch('/get_response', {
                 method: 'POST',
@@ -42,7 +42,7 @@
             });
 
             const data = await response.json();
-            chatBox.innerHTML += `<div class="message bot-message"><span>BMW Bot:</span> ${data.response}</div>`;
+            chatBox.innerHTML += `<div class="message bmw-message"><span></span> ${data.response}</div>`;
 
             document.getElementById('user-input').value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
