@@ -10,8 +10,14 @@ def generate_quiz(topic):
     }
 
     messages = [
-        {"role": "system", "content": "You are a quiz generator. Generate 5 multiple-choice questions on the given topic. Each question should have 4 options and indicate the correct answer."},
-        {"role": "user", "content": f"Generate a quiz on: {topic}"}
+        {
+            "role": "system",
+            "content": "You are a quiz generator. Generate exactly 10 quiz questions (without options) on the given topic. Number them clearly."
+        },
+        {
+            "role": "user",
+            "content": f"Generate a quiz on the topic: {topic}"
+        }
     ]
 
     payload = {
@@ -22,10 +28,19 @@ def generate_quiz(topic):
         "top_p": 0.9
     }
 
-    response = requests.post(LLAMA_API_URL, headers=headers, json=payload)
+    try:
+        response = requests.post(LLAMA_API_URL, headers=headers, json=payload)
+        response.raise_for_status()
 
-    if response.status_code == 200:
-        content = response.json()["choices"][0]["message"]["content"]
+        data = response.json()
+        content = data.get("choices", [])[0].get("message", {}).get("content", "").strip()
+
+        if not content:
+            raise ValueError("No content returned from LLaMA API.")
+        
         return content
-    else:
-        raise Exception(f"API Error {response.status_code}: {response.text}")
+
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Request error: {e}")
+    except (KeyError, IndexError, ValueError) as e:
+        raise Exception(f"Unexpected response format: {e}")
