@@ -28,14 +28,24 @@ def download():
     pdf.add_page()
     pdf.set_font("Arial", size=12)
 
+    pdf.cell(0, 10, "Name: ___________________________", ln=True)
+    pdf.cell(0, 10, "Roll Number: ____________________", ln=True)
+    pdf.cell(0, 10, "Section: _________________________", ln=True)
+    pdf.ln(10)  
+
     for line in last_quiz["content"].split("\n"):
         pdf.multi_cell(0, 10, line)
 
-    pdf_output = pdf.output(dest='S').encode('latin1')  
+    pdf_output = pdf.output(dest='S').encode('latin1')
     buffer = BytesIO(pdf_output)
     buffer.seek(0)
 
-    return send_file(buffer, as_attachment=True, download_name=f"{last_quiz['topic']}_quiz.pdf", mimetype="application/pdf")
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"{last_quiz['topic']}_quiz.pdf",
+        mimetype="application/pdf"
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
